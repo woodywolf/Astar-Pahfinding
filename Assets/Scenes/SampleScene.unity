@@ -498,7 +498,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 576410322}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 5}
+  m_LocalPosition: {x: -43.2, y: 1, z: 45.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -784,7 +784,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 662384223}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 1, z: -9}
+  m_LocalPosition: {x: 42.8, y: 1, z: -42.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -906,8 +906,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 868405142}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -8, y: 0, z: 0.4}
+  m_LocalScale: {x: 3, y: 1, z: 3}
   m_Children:
   - {fileID: 502617290}
   - {fileID: 640685416}
@@ -1044,11 +1044,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab851219121540844ba4d1fe35557127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onlyDisplayPathGizmos: 1
   Player: {fileID: 576410326}
   UnwalkableMask:
     serializedVersion: 2
     m_Bits: 256
-  GridWorldSize: {x: 30, y: 30}
+  GridWorldSize: {x: 100, y: 100}
   NodeRadius: 0.5
 --- !u!114 &1449483576
 MonoBehaviour:
@@ -1155,7 +1156,7 @@ Transform:
   m_GameObject: {fileID: 1952592363}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
