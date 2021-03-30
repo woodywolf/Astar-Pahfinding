@@ -5,14 +5,13 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    public bool onlyDisplayPathGizmos;
+    public bool displayGizmos;
     
     public Transform Player;
     public LayerMask UnwalkableMask;
     public Vector2 GridWorldSize;
     public float NodeRadius;
-    public List<Node> path;
-    
+
     private Node[,] grid;
 
     private float nodeDiameter;
@@ -23,47 +22,24 @@ public class Grid : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(GridWorldSize.x, 1, GridWorldSize.y));
-
-        if (onlyDisplayPathGizmos)
+        
+        if (grid != null && displayGizmos)
         {
-            if (path != null)
-            {
-                foreach (Node node in path)
-                {
-                    Gizmos.color = Color.black;
-                    Gizmos.DrawCube(node.worldPosition, Vector3.one * (nodeDiameter-.1f));
-                }
-            }
-        }
-        else
-        {
-            if (grid != null)
-            {
-                Node playerNode = GetNodeFromWorldPoint(Player.position);
+            Node playerNode = GetNodeFromWorldPoint(Player.position);
             
-                foreach (var node in grid)
-                {
-                    Gizmos.color = (node.walkable) ? Color.white : Color.red;
+            foreach (var node in grid)
+            {
+                Gizmos.color = (node.walkable) ? Color.white : Color.red;
                 
-                    if(playerNode == node)
-                        Gizmos.color = Color.cyan;
+                if(playerNode == node)
+                    Gizmos.color = Color.cyan;
 
-                    if (path != null)
-                    {
-                        if (path.Contains(node))
-                        {
-                            Gizmos.color = Color.black;
-                        }
-                    }
-                
-                    Gizmos.DrawCube(node.worldPosition, Vector3.one * (nodeDiameter-.1f));
-                }
+                Gizmos.DrawCube(node.worldPosition, Vector3.one * (nodeDiameter-.1f));
             }
         }
-       
     }
 
-    private void Start()
+    private void Awake()
     {
         nodeDiameter = NodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(GridWorldSize.x / nodeDiameter);
