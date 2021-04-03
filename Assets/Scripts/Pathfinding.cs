@@ -7,27 +7,20 @@ using UnityEngine;
 
 public class Pathfinding : MonoBehaviour
 {
-    private PathRequestManager requestManager;
-    
     private Grid grid;
 
     private void Awake()
     {
-        requestManager = GetComponent<PathRequestManager>();
         grid = GetComponent<Grid>();
     }
-
-    public void StartFindPath(Vector3 pathStart, Vector3 pathEnd)
-    {
-        StartCoroutine(FindPath(pathStart, pathEnd));
-    }
-    private IEnumerator FindPath(Vector3 startPosition, Vector3 targetPosition)
+    
+    public void FindPath(PathRequest request, Action<PathResult> callback)
     {
         Vector3[] waypoints = new Vector3[0];
         bool pathSuccess = false;
         
-        Node startNode = grid.GetNodeFromWorldPoint(startPosition);
-        Node targetNode = grid.GetNodeFromWorldPoint(targetPosition);
+        Node startNode = grid.GetNodeFromWorldPoint(request.pathStart);
+        Node targetNode = grid.GetNodeFromWorldPoint(request.pathEnd);
 
         if (startNode.walkable && targetNode.walkable)
         {
@@ -55,7 +48,7 @@ public class Pathfinding : MonoBehaviour
                         continue;
                     }
 
-                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                    int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) + neighbour.movementPenalty;
                     if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                     {
                         neighbour.gCost = newMovementCostToNeighbour;
@@ -66,15 +59,21 @@ public class Pathfinding : MonoBehaviour
                         {
                             openSet.Add(neighbour);
                         }
+                        else
+                        {
+                            openSet.UpdateItem(neighbour);
+                        }
                     }
                 }
             }
-            
-            yield return null;
-            if(pathSuccess)
+
+            if (pathSuccess)
+            {
                 waypoints = RetracePath(startNode, targetNode);
+                pathSuccess = waypoints.Length > 0;
+            }
             
-            requestManager.FinishedProcessingPath(waypoints, pathSuccess);
+            callback(new PathResult(waypoints, pathSuccess, request.callback));
         }
 
         Vector3[] RetracePath(Node firstNode, Node endNode)

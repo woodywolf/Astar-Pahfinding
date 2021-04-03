@@ -9,14 +9,17 @@ public class Grid : MonoBehaviour
     
     public Transform Player;
     public LayerMask UnwalkableMask;
+    public LayerMask WalkableMask;
     public Vector2 GridWorldSize;
     public float NodeRadius;
-
+    
+    public TerrainType[] walkableRegions;
     private Node[,] grid;
 
     private float nodeDiameter;
     private int gridSizeX, gridSizeY;
-
+    private Dictionary<int, int> walkableRegionsDictionary = new Dictionary<int, int>();
+        
     public int MaxSize => gridSizeX * gridSizeY;
 
     private void OnDrawGizmos()
@@ -44,6 +47,12 @@ public class Grid : MonoBehaviour
         nodeDiameter = NodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(GridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(GridWorldSize.y / nodeDiameter);
+
+        foreach (var region in walkableRegions)
+        {
+            WalkableMask.value |= region.terrainMask.value;
+            walkableRegionsDictionary.Add((int)Mathf.Log(region.terrainMask.value, 2), region.terrainPenalty);
+        }
         
         CreateGrid();
     }
@@ -63,7 +72,21 @@ public class Grid : MonoBehaviour
                                                      + Vector3.forward * (y * nodeDiameter + NodeRadius);
                 
                 bool walkable = !(Physics.CheckSphere(worldPoint, NodeRadius, UnwalkableMask));
-                grid[x, y] = new Node(walkable, worldPoint, x, y);
+
+                int movementPenalty = 0;
+
+                if (walkable)
+                {
+                    Ray ray = new Ray(worldPoint + Vector3.up * 50, Vector3.down);
+                    RaycastHit hit;
+                    
+                    if (Physics.Raycast(ray, out hit, 100, WalkableMask))
+                    {
+                        walkableRegionsDictionary.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
+                    }
+                }
+                
+                grid[x, y] = new Node(walkable, worldPoint, x, y, movementPenalty);
             }
         }
     }
@@ -106,4 +129,11 @@ public class Grid : MonoBehaviour
         
         return grid[x,y];
     }
+}
+
+[Serializable]
+public class TerrainType
+{
+    public LayerMask terrainMask;
+    public int terrainPenalty;
 }
